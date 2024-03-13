@@ -1,0 +1,11 @@
+<!-- product-master.component.html -->
+<h2>Product Master</h2>
+
+<div *ngFor="let product of displayedProducts">
+  <p>{{ product.ProductId }} - {{ product.ProductName }} - {{ product.CategoryName }} ({{ product.CategoryId }})</p>
+</div>
+
+<button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+<button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+
+

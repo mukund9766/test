@@ -1,0 +1,12 @@
+<!-- category-master.component.html -->
+<h2>Category Master</h2>
+
+<div *ngFor="let category of categories">
+  <p>{{ category.CategoryId }} - {{ category.CategoryName }}</p>
+</div>
+
+<form (submit)="addCategory()">
+  <input type="text" placeholder="Category Name" [(ngModel)]="newCategoryName" required>
+  <button type="submit">Add Category</button>
+</form>
+
