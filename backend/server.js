@@ -4,11 +4,8 @@ const bodyparser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-
 app.use(cors());
 app.use(bodyparser.json())
-
-
 
 // MySQL connection configuration
 const db = mysql.createConnection({
@@ -18,7 +15,6 @@ const db = mysql.createConnection({
   database: 'product_management',
 });
 
-
 // Connect to MySQL
 db.connect((err) => {
   if (err) {
@@ -26,9 +22,6 @@ db.connect((err) => {
   }
   console.log('MySQL connected');
 });
-
-// // Middleware
-// app.use(express.json()); // Parse JSON bodies
 
 
 // Get all categories
