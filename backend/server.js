@@ -7,18 +7,15 @@ const app = express();
 
 app.use(cors());
 app.use(bodyparser.json())
- 
-// const port = 3000;// Change the port number if needed
+
 
 
 // MySQL connection configuration
-
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'root',
   database: 'product_management',
-//   port: 3006
 });
 
 
@@ -110,17 +107,6 @@ app.post('/products', (req, res) => {
   });
 });
 
-app.get('/products', (req, res) => {
-  const { page = 1, pageSize = 10 } = req.query;
-  const offset = (page - 1) * pageSize;
-  const sql = `SELECT products.*, categories.CategoryName FROM products LEFT JOIN categories ON products.CategoryId = categories.CategoryId LIMIT ${offset}, ${pageSize}`;
-  db.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.json(result);
-  });
-});
 
 
 // Routes for categories
