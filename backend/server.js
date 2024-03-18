@@ -100,7 +100,32 @@ app.post('/products', (req, res) => {
   });
 });
 
+// Delete product
+app.delete('/products/:id', (req, res) => {
+  const { id } = req.params;
+  const sql = 'DELETE FROM products WHERE ProductId = ?';
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: 'Failed to delete product' });
+    } else {
+      res.json({ message: 'Product deleted successfully' });
+    }
+  });
+});
 
+// Update product
+app.put('/products/:id', (req, res) => {
+  const { id } = req.params;
+  const { ProductName, CategoryId } = req.body;
+  const sql = 'UPDATE products SET ProductName = ?, CategoryId = ? WHERE ProductId = ?';
+  db.query(sql, [ProductName, CategoryId, id], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: 'Failed to update product' });
+    } else {
+      res.json({ message: 'Product updated successfully' });
+    }
+  });
+});
 
 // Routes for categories
 app.get('/categories', (req, res) => {
