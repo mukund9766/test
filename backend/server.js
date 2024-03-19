@@ -23,7 +23,6 @@ db.connect((err) => {
   console.log('MySQL connected');
 });
 
-
 // Get all categories
 app.get('/categories', (req, res) => {
   const sql = 'SELECT * FROM categories';
@@ -78,25 +77,33 @@ app.delete('/categories/:id', (req, res) => {
 
 // Get all products
 app.get('/products', (req, res) => {
-  const sql = 'SELECT products.*, categories.CategoryName FROM products LEFT JOIN categories ON products.CategoryId = categories.CategoryId';
-  db.query(sql, (err, result) => {
+  const { pageSize, page } = req.query;
+  const limit = parseInt(pageSize);
+  const offset = (parseInt(page) - 1) * limit;
+
+  const sql = `SELECT p.ProductId, p.ProductName, c.CategoryName, p.CategoryId
+               FROM products p
+               INNER JOIN categories c ON p.CategoryId = c.CategoryId
+               LIMIT ?, ?`;
+  db.query(sql, [offset, limit], (err, result) => {
     if (err) {
-      throw err;
+      res.status(500).json({ error: 'Failed to fetch products' });
+    } else {
+      res.json(result);
     }
-    res.json(result);
   });
 });
 
 // Add a new product
 app.post('/products', (req, res) => {
   const { ProductName, CategoryId } = req.body;
-  const sql = `INSERT INTO products (ProductName, CategoryId) VALUES ('${ProductName}', ${CategoryId})`;
-  db.query(sql, (err, result) => {
+  const sql = `INSERT INTO products (ProductName, CategoryId) VALUES (?, ?)`;
+  db.query(sql, [ProductName, CategoryId], (err, result) => {
     if (err) {
-      throw err;
+      res.status(500).json({ error: 'Failed to add product' });
+    } else {
+      res.json({ message: 'Product added successfully' });
     }
-    console.log('Product added successfully');
-    res.sendStatus(201);
   });
 });
 
@@ -123,37 +130,6 @@ app.put('/products/:id', (req, res) => {
       res.status(500).json({ error: 'Failed to update product' });
     } else {
       res.json({ message: 'Product updated successfully' });
-    }
-  });
-});
-
-// Routes for categories
-app.get('/categories', (req, res) => {
-  const sql = 'SELECT * FROM categories';
-  db.query(sql, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: 'Failed to fetch categories' });
-    } else {
-      res.json(result);
-    }
-  });
-});
-
-// // Routes for products
-app.get('/products', (req, res) => {
-  const { pageSize, page } = req.query;
-  const limit = parseInt(pageSize);
-  const offset = (parseInt(page) - 1) * limit;
-
-  const sql = `SELECT p.ProductId, p.ProductName, c.CategoryName, p.CategoryId
-               FROM products p
-               INNER JOIN categories c ON p.CategoryId = c.CategoryId
-               LIMIT ?, ?`;
-  db.query(sql, [offset, limit], (err, result) => {
-    if (err) {
-      res.status(500).json({ error: 'Failed to fetch products' });
-    } else {
-      res.json(result);
     }
   });
 });
